@@ -1,16 +1,15 @@
 import { useState } from "react";
 import axios from "axios";
 
-// 🔥 YOUR BACKEND URL
-const API = process.env.REACT_APP_API;;
+// 🔥 Backend URL (keep this same)
+const API = process.env.REACT_APP_API;
 
 function App() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const [title, setTitle] = useState("");
-  const [amount, setAmount] = useState("");
-  const [category, setCategory] = useState("");
+  const [subject, setSubject] = useState("");
+  const [description, setDescription] = useState("");
 
   const [expenses, setExpenses] = useState([]);
 
@@ -30,31 +29,30 @@ function App() {
     }
   };
 
-  // ADD EXPENSE
+  // ADD GRIEVANCE
   const addExpense = async () => {
     try {
       const token = localStorage.getItem("token");
 
       await axios.post(
         `${API}/api/expenses`,
-        { title, amount, category },
+        { subject, description }, // ✅ changed
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
 
-      setTitle("");
-      setAmount("");
-      setCategory("");
+      setSubject("");
+      setDescription("");
 
       getExpenses();
     } catch (err) {
       console.log(err.response?.data);
-      alert("Add failed");
+      alert("Submit failed");
     }
   };
 
-  // GET EXPENSES
+  // GET GRIEVANCES
   const getExpenses = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -70,7 +68,7 @@ function App() {
     }
   };
 
-  // DELETE EXPENSE
+  // DELETE
   const deleteExpense = async (id) => {
     try {
       const token = localStorage.getItem("token");
@@ -88,7 +86,7 @@ function App() {
 
   return (
     <div style={styles.container}>
-      <h1 style={styles.heading}>💸 Expense Manager</h1>
+      <h1 style={styles.heading}>🎓 Student Grievance System</h1>
 
       {/* LOGIN */}
       <div style={styles.card}>
@@ -111,49 +109,45 @@ function App() {
         </button>
       </div>
 
-      {/* ADD EXPENSE */}
+      {/* ADD GRIEVANCE */}
       <div style={styles.card}>
-        <h3>Add Expense</h3>
+        <h3>Submit Grievance</h3>
+
         <input
           style={styles.input}
-          placeholder="Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Subject"
+          value={subject}
+          onChange={(e) => setSubject(e.target.value)}
         />
+
         <input
           style={styles.input}
-          placeholder="Amount"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-        />
-        <input
-          style={styles.input}
-          placeholder="Category"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
+          placeholder="Description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
         />
 
         <button style={styles.button} onClick={addExpense}>
-          Add Expense
+          Submit
         </button>
       </div>
 
       {/* LOAD */}
       <button style={styles.getBtn} onClick={getExpenses}>
-        Load Expenses
+        View Grievances
       </button>
 
       {/* LIST */}
       <div style={styles.list}>
         {expenses.length === 0 ? (
-          <p>No expenses yet</p>
+          <p>No grievances yet</p>
         ) : (
           expenses.map((e) => (
             <div key={e._id} style={styles.expenseCard}>
               <div>
-                <strong>{e.title}</strong>
+                <strong>{e.subject}</strong>
                 <p>
-                  ₹{e.amount} • {e.category}
+                  {e.description} • {e.status}
                 </p>
               </div>
 
@@ -171,7 +165,7 @@ function App() {
   );
 }
 
-// 🎨 STYLES
+// 🎨 STYLES (same as before)
 const styles = {
   container: {
     maxWidth: "500px",

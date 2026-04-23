@@ -1,8 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
 
-// 🔥 Backend URL (keep this same)
-const API = process.env.REACT_APP_API;
+// ✅ FIXED: Direct backend URL (NO env issues)
+const API = "https://app-pb6o.onrender.com";
 
 function App() {
   const [email, setEmail] = useState("");
@@ -13,7 +13,23 @@ function App() {
 
   const [expenses, setExpenses] = useState([]);
 
-  // LOGIN
+  // 🔥 REGISTER
+  const register = async () => {
+    try {
+      await axios.post(`${API}/api/auth/register`, {
+        name: "Student",
+        email,
+        password,
+      });
+
+      alert("Registered successfully. Now login.");
+    } catch (err) {
+      console.log(err.response?.data);
+      alert(err.response?.data?.msg || "Register failed");
+    }
+  };
+
+  // 🔥 LOGIN
   const login = async () => {
     try {
       const res = await axios.post(`${API}/api/auth/login`, {
@@ -29,14 +45,14 @@ function App() {
     }
   };
 
-  // ADD GRIEVANCE
+  // 🔥 ADD GRIEVANCE
   const addExpense = async () => {
     try {
       const token = localStorage.getItem("token");
 
       await axios.post(
         `${API}/api/expenses`,
-        { subject, description }, // ✅ changed
+        { subject, description },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -52,7 +68,7 @@ function App() {
     }
   };
 
-  // GET GRIEVANCES
+  // 🔥 GET GRIEVANCES
   const getExpenses = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -68,7 +84,7 @@ function App() {
     }
   };
 
-  // DELETE
+  // 🔥 DELETE
   const deleteExpense = async (id) => {
     try {
       const token = localStorage.getItem("token");
@@ -91,12 +107,14 @@ function App() {
       {/* LOGIN */}
       <div style={styles.card}>
         <h3>Login</h3>
+
         <input
           style={styles.input}
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
+
         <input
           style={styles.input}
           type="password"
@@ -104,8 +122,17 @@ function App() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+
         <button style={styles.button} onClick={login}>
           Login
+        </button>
+
+        {/* 🔥 REGISTER BUTTON */}
+        <button
+          style={{ ...styles.button, background: "#555", marginTop: "10px" }}
+          onClick={register}
+        >
+          Register
         </button>
       </div>
 
@@ -165,7 +192,7 @@ function App() {
   );
 }
 
-// 🎨 STYLES (same as before)
+// 🎨 STYLES
 const styles = {
   container: {
     maxWidth: "500px",
